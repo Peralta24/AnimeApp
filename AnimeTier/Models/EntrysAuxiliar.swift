@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct AnimeImages: Codable {
+struct AnimeImages: Codable, Hashable {
     let jpg: ImageURL
 }
 
-struct ImageURL: Codable {
+struct ImageURL: Codable, Hashable {
     let imageUrl: String
     let largeImageUrl: String?
     
@@ -21,7 +21,7 @@ struct ImageURL: Codable {
     }
 }
 
-struct Genre: Codable, Identifiable {
+struct Genre: Codable, Identifiable, Hashable {
     let id: Int
     let name: String
     

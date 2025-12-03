@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AnimeEntry: Identifiable, Codable {
+struct AnimeEntry: Identifiable, Codable, Hashable {
     let id: Int
     let url: String
     let images: AnimeImages

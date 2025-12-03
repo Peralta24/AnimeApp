@@ -40,15 +40,50 @@ struct ContentView: View {
                     VStack(spacing: 30) {
                         
                         VStack(alignment: .leading) {
-                            Text("Mejores Calificados")
-                                .font(.title2.bold())
-                                .foregroundStyle(.colorTitle)
+                            NavigationLink(value:ExploreDestination.explorar){
+                                Text("Explorar")
+                                    .font(.title2.bold())
+                                    .foregroundStyle(.colorTitle)
+                                    .padding(.horizontal)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.colorTitle)
+                            }
+                            .padding(.horizontal)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 15) {
+                                    ForEach(allanimes) { anime in
+                                        NavigationLink(value: anime){
+                                            AnimeHeroView(anime: anime)
+                                        }
+                                    }
+                                }
                                 .padding(.horizontal)
+                            }
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            NavigationLink(value: ExploreDestination.mejoresCalificados){
+                                Text("Mejores Calificados")
+                                    .font(.title2.bold())
+                                    .foregroundStyle(.colorTitle)
+                                    .padding(.horizontal)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.colorTitle)
+                            }
+                            .padding(.horizontal)
+
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
                                     ForEach(mejoresCalificados) { anime in
-                                        AnimeViewCell(anime: anime)
+                                        NavigationLink(value: anime) {
+                                            AnimeViewCell(anime: anime)
+                                        }
                                     }
                                 }
                                 .padding(.horizontal)
@@ -56,34 +91,74 @@ struct ContentView: View {
                         }
                         
                         VStack(alignment: .leading) {
-                            Text("Animes más populares")
-                                .font(.title2.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal)
+                            NavigationLink(value: ExploreDestination.masPopulares){
+                                Text("Animes más populares")
+                                    .font(.title2.bold())
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.colorTitle)
+                            }
+                            .padding(.horizontal)
+
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
                                     ForEach(masPopulares) { anime in
-                                        AnimeViewCell(anime: anime)
+                                        NavigationLink(value:anime){
+                                            AnimeViewCell(anime: anime)
+                                        }
                                     }
                                 }
                                 .padding(.horizontal)
                             }
                         }
                         
+                        
                         VStack(alignment: .leading) {
-                            Text("Animes más nuevos")
-                                .font(.title2.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal)
+                            NavigationLink(value: ExploreDestination.recientes){
+                                Text("Animes más nuevos")
+                                    .font(.title2.bold())
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.colorTitle)
+                            }
+                            .padding(.horizontal)
+
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
                                     ForEach(soloRecientes) { anime in
-                                        AnimeViewCell(anime: anime)
+                                        NavigationLink(value:anime){
+                                            AnimeViewCell(anime: anime)
+                                        }
+                                        
                                     }
                                 }
                                 .padding(.horizontal)
+                            }
+                        }
+                        .navigationDestination(for: AnimeEntry.self) { anime in
+                            Text(anime.titleEnglish ?? "no")
+                        }
+                        .navigationDestination(for: ExploreDestination.self) { destino in
+                            switch destino {
+                            case .explorar:
+                                Text("Explorar")
+                            case .mejoresCalificados:
+                                Text("Mejores calificados")
+                            case .masPopulares:
+                                Text("Mas populares")
+                            case .recientes:
+                                Text("recientes")
+                            default:
+                                Text("No se encontro")
                             }
                         }
                     }
