@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AllAnimesGrids: View {
+    let title: String
     var animes : [AnimeEntry]
     let colums = [
         GridItem(.adaptive(minimum: 150, maximum: 300))
@@ -16,18 +17,19 @@ struct AllAnimesGrids: View {
         ZStack {
             Color.colorBackground
                 .ignoresSafeArea()
-            ScrollView(.vertical, showsIndicators: false){
-                LazyVGrid(columns: colums) {
+            ScrollView(.vertical, showsIndicators: false){                LazyVGrid(columns: colums) {
                     ForEach(animes){anime in
                         AnimeViewCell(anime: anime)
                     }
                 }
             }
         }
-        
+        .navigationTitle(title)
+        .preferredColorScheme(.dark)
     }
+    
 }
 
 #Preview {
-    AllAnimesGrids(animes: [AnimeEntry.example])
+    AllAnimesGrids(title:"aaa",animes: [AnimeEntry.example])
 }

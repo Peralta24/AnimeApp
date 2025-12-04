@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var allanimes: [AnimeEntry] = []
-    
+    let limiteHorizontal = 6
     var mejoresCalificados: [AnimeEntry] {
         allanimes.filter { ($0.score ?? 0.0) > 8.5 }
     }
@@ -54,7 +54,7 @@ struct ContentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(allanimes) { anime in
+                                    ForEach(allanimes.prefix(limiteHorizontal)) { anime in
                                         NavigationLink(value: anime){
                                             AnimeHeroView(anime: anime)
                                         }
@@ -80,7 +80,7 @@ struct ContentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(mejoresCalificados) { anime in
+                                    ForEach(mejoresCalificados.prefix(limiteHorizontal)) { anime in
                                         NavigationLink(value: anime) {
                                             AnimeViewCell(anime: anime)
                                         }
@@ -106,7 +106,7 @@ struct ContentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(masPopulares) { anime in
+                                    ForEach(masPopulares.prefix(limiteHorizontal)) { anime in
                                         NavigationLink(value:anime){
                                             AnimeViewCell(anime: anime)
                                         }
@@ -134,7 +134,7 @@ struct ContentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(soloRecientes) { anime in
+                                    ForEach(soloRecientes.prefix(limiteHorizontal)) { anime in
                                         NavigationLink(value:anime){
                                             AnimeViewCell(anime: anime)
                                         }
@@ -150,13 +150,13 @@ struct ContentView: View {
                         .navigationDestination(for: ExploreDestination.self) { destino in
                             switch destino {
                             case .explorar:
-                                AllAnimesGrids(animes: allanimes)
+                                AllAnimesGrids(title:"Explorar",animes: allanimes)
                             case .mejoresCalificados:
-                                AllAnimesGrids(animes: mejoresCalificados)
+                                AllAnimesGrids(title:"Mejores Calificados",animes: mejoresCalificados)
                             case .masPopulares:
-                                AllAnimesGrids(animes: masPopulares)
+                                AllAnimesGrids(title:"Mas populares",animes: masPopulares)
                             case .recientes:
-                                AllAnimesGrids(animes: soloRecientes)
+                                AllAnimesGrids(title:"Mas recientes",animes: soloRecientes)
                             }
                         }
                     }
@@ -165,26 +165,32 @@ struct ContentView: View {
             }
         }
         .task {
-            await fetchAnimes()
+            await fetchAllAnimes()
         }
     }
     
-    func fetchAnimes() async {
-        guard let url = URL(string: "https://api.jikan.moe/v4/top/anime")else {
-            return
-        }
-        
-        do {
-            let(data,_) = try await URLSession.shared.data(from: url)
+    func fetchAllAnimes() async {
+        var loadedAnimes: [AnimeEntry] = []
+        var pagina = 1
+        let paginasTotales = 4
+        while pagina <= paginasTotales {
+            guard let url = URL(string: "https://api.jikan.moe/v4/top/anime?page=\(pagina)") else { break }
             
-            let decodedData = try JSONDecoder().decode(AnimeResponse.self, from: data)
-            
-            self.allanimes = decodedData.data
-        }catch {
-            print("Error cargando API anime")
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                let decodedData = try JSONDecoder().decode(AnimeResponse.self, from: data)
+                
+                if decodedData.data.isEmpty { break }
+                
+                loadedAnimes.append(contentsOf: decodedData.data)
+                pagina += 1
+            } catch {
+                print("Error cargando página \(pagina): \(error)")
+                break
+            }
         }
-    }
-}
+                self.allanimes = loadedAnimes
+    }}
 #Preview {
     ContentView()
 }
