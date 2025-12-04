@@ -150,15 +150,13 @@ struct ContentView: View {
                         .navigationDestination(for: ExploreDestination.self) { destino in
                             switch destino {
                             case .explorar:
-                                Text("Explorar")
+                                AllAnimesGrids(animes: allanimes)
                             case .mejoresCalificados:
-                                Text("Mejores calificados")
+                                AllAnimesGrids(animes: mejoresCalificados)
                             case .masPopulares:
-                                Text("Mas populares")
+                                AllAnimesGrids(animes: masPopulares)
                             case .recientes:
-                                Text("recientes")
-                            default:
-                                Text("No se encontro")
+                                AllAnimesGrids(animes: soloRecientes)
                             }
                         }
                     }

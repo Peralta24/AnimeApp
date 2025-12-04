@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct AllAnimesGrids: View {
+    var animes : [AnimeEntry]
+    let colums = [
+        GridItem(.adaptive(minimum: 150, maximum: 300))
+    ]
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            Color.colorBackground
+                .ignoresSafeArea()
+            ScrollView(.vertical, showsIndicators: false){
+                LazyVGrid(columns: colums) {
+                    ForEach(animes){anime in
+                        AnimeViewCell(anime: anime)
+                    }
+                }
+            }
+        }
+        
     }
 }
 
 #Preview {
-    AllAnimesGrids()
+    AllAnimesGrids(animes: [AnimeEntry.example])
 }
