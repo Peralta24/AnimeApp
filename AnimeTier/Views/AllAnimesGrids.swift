@@ -11,7 +11,7 @@ struct AllAnimesGrids: View {
     let title: String
     var animes : [AnimeEntry]
     let colums = [
-        GridItem(.adaptive(minimum: 150, maximum: 300))
+        GridItem(.adaptive(minimum: 100, maximum: 300))
     ]
     var body: some View {
         ZStack {

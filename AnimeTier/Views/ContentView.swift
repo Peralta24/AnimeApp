@@ -6,28 +6,28 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var allanimes: [AnimeEntry] = []
+    @Environment(\.modelContext) var modelContext
+    
+    @Query(sort: \AnimeEntry.title)
+    private var allanimes: [AnimeEntry]
+    
+    
     let limiteHorizontal = 6
-    var mejoresCalificados: [AnimeEntry] {
-        allanimes.filter { ($0.score ?? 0.0) > 8.5 }
-    }
     
-    var masPopulares: [AnimeEntry] {
-        
-        let ordenados = allanimes.sorted {
-            ($0.popularity ?? 9999) < ($1.popularity ?? 9999)
-        }
-        return ordenados
-    }
+    @Query(filter: #Predicate<AnimeEntry> { $0.score ?? 0.0 > 8.5 },
+           sort: \AnimeEntry.score, order: .reverse)
+    private var mejoresCalificados: [AnimeEntry]
     
-    var soloRecientes: [AnimeEntry] {
-        allanimes
-            .filter { ($0.year ?? 0) >= 2020 }
-            .sorted { ($0.year ?? 0) > ($1.year ?? 0) }
-    }
     
+    @Query(sort: \AnimeEntry.popularity, order: .forward)
+    private var masPopulares: [AnimeEntry]
+    
+    @Query(filter: #Predicate<AnimeEntry> { $0.year ?? 0 >= 2020 },
+           sort: \AnimeEntry.year, order: .reverse)
+    private var soloRecientes: [AnimeEntry]
     
     var body: some View {
         NavigationStack {
@@ -48,7 +48,7 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorTitle)
+                                    .foregroundStyle(.colorWords)
                             }
                             .padding(.horizontal)
                             
@@ -73,10 +73,10 @@ struct ContentView: View {
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorTitle)
+                                    .foregroundStyle(.colorWords)
                             }
                             .padding(.horizontal)
-
+                            
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -94,15 +94,15 @@ struct ContentView: View {
                             NavigationLink(value: ExploreDestination.masPopulares){
                                 Text("Animes más populares")
                                     .font(.title2.bold())
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(.colorTitle)
                                     .padding(.horizontal)
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorTitle)
+                                    .foregroundStyle(.colorWords)
                             }
                             .padding(.horizontal)
-
+                            
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -121,16 +121,16 @@ struct ContentView: View {
                             NavigationLink(value: ExploreDestination.recientes){
                                 Text("Animes más nuevos")
                                     .font(.title2.bold())
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(.colorTitle)
                                     .padding(.horizontal)
                                 
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorTitle)
+                                    .foregroundStyle(.colorWords)
                             }
                             .padding(.horizontal)
-
+                            
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -152,6 +152,7 @@ struct ContentView: View {
                             case .explorar:
                                 AllAnimesGrids(title:"Explorar",animes: allanimes)
                             case .mejoresCalificados:
+                                Text("Elementos a mostrar en Grid: \(mejoresCalificados.count)")
                                 AllAnimesGrids(title:"Mejores Calificados",animes: mejoresCalificados)
                             case .masPopulares:
                                 AllAnimesGrids(title:"Mas populares",animes: masPopulares)
@@ -169,28 +170,63 @@ struct ContentView: View {
         }
     }
     
+    // MARK: - FUNCIÓN CORREGIDA
     func fetchAllAnimes() async {
-        var loadedAnimes: [AnimeEntry] = []
+        do {
+            let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
+            
+            if count > 125 {
+                print("✅ SwiftData ya contiene \(count) animes. No es necesario recargar.")
+                return
+            } else {
+                if count > 0 {
+                    print("⚠️ Datos incompletos (\(count)). Limpiando para recarga completa...")
+                    try? modelContext.delete(model: AnimeEntry.self)
+                }
+            }
+        } catch {
+            print("Error al verificar SwiftData: \(error)")
+        }
+        
         var pagina = 1
-        let paginasTotales = 4
+        let paginasTotales = 5
+        
+        var allAnimeEntries: [AnimeEntry] = []
+        
+        print("Iniciando descarga masiva de animes...")
+        
         while pagina <= paginasTotales {
             guard let url = URL(string: "https://api.jikan.moe/v4/top/anime?page=\(pagina)") else { break }
             
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
-                let decodedData = try JSONDecoder().decode(AnimeResponse.self, from: data)
+                let decodedResponse = try JSONDecoder().decode(AnimeResponse.self, from: data)
                 
-                if decodedData.data.isEmpty { break }
+                allAnimeEntries.append(contentsOf: decodedResponse.data)
+                print("   - Página \(pagina) descargada. Total acumulado: \(allAnimeEntries.count)")
                 
-                loadedAnimes.append(contentsOf: decodedData.data)
+                if decodedResponse.data.isEmpty { break }
+                
                 pagina += 1
+                
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                
             } catch {
                 print("Error cargando página \(pagina): \(error)")
                 break
             }
         }
-                self.allanimes = loadedAnimes
-    }}
+        
+        if !allAnimeEntries.isEmpty {
+            print("Guardando \(allAnimeEntries.count) animes en SwiftData...")
+            for anime in allAnimeEntries {
+                modelContext.insert(anime)
+            }
+            print("Inserción completa.")
+        }
+    }
+}
+
 #Preview {
     ContentView()
 }

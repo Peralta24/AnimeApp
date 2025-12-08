@@ -6,28 +6,80 @@
 //
 
 import Foundation
-
-struct AnimeImages: Codable, Hashable {
-    let jpg: ImageURL
+import SwiftData
+@Model
+final class AnimeImages: Codable, Hashable {
+    var jpg: ImageURL
+    
+    enum CodingKeys: String, CodingKey {
+        case jpg
+    }
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.jpg = try container.decode(ImageURL.self, forKey: .jpg)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(jpg, forKey: .jpg)
+    }
+    init (imageUrl: String, largeImageUrl: String?) {
+        self.jpg = .init(imageUrl: imageUrl, largeImageUrl: largeImageUrl)
+    }
 }
 
-struct ImageURL: Codable, Hashable {
-    let imageUrl: String
-    let largeImageUrl: String?
+@Model
+final class ImageURL: Codable, Hashable {
+    var imageUrl: String
+    var largeImageUrl: String?
     
     enum CodingKeys: String, CodingKey {
         case imageUrl = "image_url"
         case largeImageUrl = "large_image_url"
     }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.imageUrl = try container.decode(String.self, forKey: .imageUrl)
+        self.largeImageUrl = try container.decodeIfPresent(String.self, forKey: .largeImageUrl)
+    }
+        
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(imageUrl, forKey: .imageUrl)
+        try container.encodeIfPresent(largeImageUrl, forKey: .largeImageUrl)
+    }
+    
+    init(imageUrl: String, largeImageUrl: String?) {
+        self.imageUrl = imageUrl
+        self.largeImageUrl = largeImageUrl
+    }
 }
 
-struct Genre: Codable, Identifiable, Hashable {
-    let id: Int
-    let name: String
+@Model
+final class Genre: Codable, Hashable {     var id: Int
+    var name: String
     
     enum CodingKeys: String, CodingKey {
         case id = "mal_id"
         case name
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(Int.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+    }
+    
+    init(id: Int, name: String) {
+        self.id = id
+        self.name = name
     }
 }
 
