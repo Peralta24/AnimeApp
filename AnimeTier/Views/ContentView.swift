@@ -147,7 +147,7 @@ struct ContentView: View {
                         .preferredColorScheme(.dark)
 
                         .navigationDestination(for: AnimeEntry.self) { anime in
-                            Text(anime.titleEnglish ?? "no")
+                            AnimeDetailView(anime: anime)
                         }
                         .navigationDestination(for: ExploreDestination.self) { destino in
                             switch destino {
@@ -175,7 +175,7 @@ struct ContentView: View {
         do {
             let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
             
-            if count > 125 {
+            if count > 50 {
                 print("✅ SwiftData ya contiene \(count) animes. No es necesario recargar.")
                 return
             } else {
@@ -189,7 +189,7 @@ struct ContentView: View {
         }
         
         var pagina = 1
-        let paginasTotales = 5
+        let paginasTotales = 2
         
         var allAnimeEntries: [AnimeEntry] = []
         

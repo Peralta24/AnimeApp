@@ -26,7 +26,7 @@ struct AllAnimesGrids: View {
             }
             }
             .navigationDestination(for: AnimeEntry.self) { anime in
-                Text(anime.titleEnglish ?? "no")
+                AnimeDetailView(anime: anime)
             }
         }
         .navigationTitle(title)
