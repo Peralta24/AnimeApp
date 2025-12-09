@@ -18,10 +18,15 @@ struct AllAnimesGrids: View {
             Color.colorBackground
                 .ignoresSafeArea()
             ScrollView(.vertical, showsIndicators: false){                LazyVGrid(columns: colums) {
-                    ForEach(animes){anime in
+                ForEach(animes){anime in
+                    NavigationLink(value:anime){
                         AnimeViewCell(anime: anime)
                     }
                 }
+            }
+            }
+            .navigationDestination(for: AnimeEntry.self) { anime in
+                Text(anime.titleEnglish ?? "no")
             }
         }
         .navigationTitle(title)

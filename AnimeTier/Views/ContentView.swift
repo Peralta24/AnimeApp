@@ -144,6 +144,8 @@ struct ContentView: View {
                                 .padding(.horizontal)
                             }
                         }
+                        .preferredColorScheme(.dark)
+
                         .navigationDestination(for: AnimeEntry.self) { anime in
                             Text(anime.titleEnglish ?? "no")
                         }
