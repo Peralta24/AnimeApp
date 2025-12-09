@@ -47,7 +47,7 @@ struct AnimeDetailView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 150, height: 150)
-                                
+                            
                             
                         } else if phase.error != nil {
                             ZStack {
@@ -76,29 +76,46 @@ struct AnimeDetailView: View {
                             .foregroundStyle(.colorWords)
                         
                         HStack {
-                            Button {
+                            HStack {
+                                Button {
+                                    
+                                }label : {
+                                    Image(systemName: "play")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 16, height: 16)
+                                        .foregroundStyle(.colorWords)
+                                        .fontWeight(.bold)
+                                    Text("Trailer")
+                                        .foregroundStyle(.colorWords)
+                                        .fontWeight(.black)
+                                }
                                 
-                            }label : {
-                                Image(systemName: "play")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 16, height: 16)
-                                    .foregroundStyle(.colorWords)
-                                    .fontWeight(.bold)
-                                Text("Trailer")
-                                    .foregroundStyle(.colorWords)
-                                    .fontWeight(.bold)
                             }
-                           
-
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.purple.opacity(0.1))
+                            )
+                            Button(action: {
+                                print("Tapped")
+                            }) {
+                                Circle()
+                                    .fill(.purple.opacity(0.1))
+                                    .frame(width: 38, height: 38)
+                                    .overlay(
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundColor(.white)
+                                    )
+                                    .shadow(radius: 4)
+                            }
+                            
+                            
                             
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.purple)
-                        )
+                        
                     }
                 }
                 .padding(.vertical)
