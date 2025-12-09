@@ -145,7 +145,7 @@ struct ContentView: View {
                             }
                         }
                         .preferredColorScheme(.dark)
-
+                        
                         .navigationDestination(for: AnimeEntry.self) { anime in
                             AnimeDetailView(anime: anime)
                         }
@@ -167,62 +167,39 @@ struct ContentView: View {
             }
         }
         .task {
-            await fetchAllAnimes()
+            await refreshAnimeLogic()
         }
     }
     
-    func fetchAllAnimes() async {
+    func refreshAnimeLogic() async {
+        //Verificacion de SwiftData
         do {
             let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
             
             if count > 50 {
-                print("✅ SwiftData ya contiene \(count) animes. No es necesario recargar.")
-                return
-            } else {
-                if count > 0 {
-                    print("⚠️ Datos incompletos (\(count)). Limpiando para recarga completa...")
-                    try? modelContext.delete(model: AnimeEntry.self)
-                }
+                print("Swift Data ya contiene \(count) animes")
+            }else if count > 0 {
+                print("Datos incompletos en Swift Data, se procederá a actualizar los datos")
+                try? modelContext.delete(model: AnimeEntry.self)
             }
         } catch {
-            print("Error al verificar SwiftData: \(error)")
+            print("Error al verficar la base de datos: \(error)")
         }
         
-        var pagina = 1
-        let paginasTotales = 2
-        
-        var allAnimeEntries: [AnimeEntry] = []
-        
-        print("Iniciando descarga masiva de animes...")
-        
-        while pagina <= paginasTotales {
-            guard let url = URL(string: "https://api.jikan.moe/v4/top/anime?page=\(pagina)") else { break }
+        do {
+            //Obtener los datos limpios del manager
+            let nuevosAnimes = try await NetworkManager.shared.fetchTopAnimes()
             
-            do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                let decodedResponse = try JSONDecoder().decode(AnimeResponse.self, from: data)
-                
-                allAnimeEntries.append(contentsOf: decodedResponse.data)
-                print("   - Página \(pagina) descargada. Total acumulado: \(allAnimeEntries.count)")
-                
-                if decodedResponse.data.isEmpty { break }
-                
-                pagina += 1
-                
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
-                
-            } catch {
-                print("Error cargando página \(pagina): \(error)")
-                break
+            await MainActor.run {
+                print("Guardando \(nuevosAnimes.count) animes en SwiftData")
+                for anime in nuevosAnimes {
+                    modelContext.insert(anime)
+                }
+                try? modelContext.save()
+                print("Insercion exitosa de animes en SwiftData")
             }
-        }
-        
-        if !allAnimeEntries.isEmpty {
-            print("Guardando \(allAnimeEntries.count) animes en SwiftData...")
-            for anime in allAnimeEntries {
-                modelContext.insert(anime)
-            }
-            print("Inserción completa.")
+        } catch {
+            print("Error descargando animes \(error.localizedDescription)")
         }
     }
 }
