@@ -152,7 +152,6 @@ struct ContentView: View {
                             case .explorar:
                                 AllAnimesGrids(title:"Explorar",animes: allanimes)
                             case .mejoresCalificados:
-                                Text("Elementos a mostrar en Grid: \(mejoresCalificados.count)")
                                 AllAnimesGrids(title:"Mejores Calificados",animes: mejoresCalificados)
                             case .masPopulares:
                                 AllAnimesGrids(title:"Mas populares",animes: masPopulares)
@@ -170,7 +169,6 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - FUNCIÓN CORREGIDA
     func fetchAllAnimes() async {
         do {
             let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
