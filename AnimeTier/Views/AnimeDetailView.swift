@@ -9,6 +9,9 @@ import SwiftUI
 
 struct AnimeDetailView: View {
     var anime: AnimeEntry
+    @Environment(\.openURL) var openURL
+    @State private var showTrailerAlert: Bool = false
+    @State private var showTrailerMessage: String?
     
     var body: some View {
         ScrollView {
@@ -78,7 +81,7 @@ struct AnimeDetailView: View {
                         HStack {
                             HStack {
                                 Button {
-                                    
+                                    checkTrailer()
                                 }label : {
                                     Image(systemName: "play")
                                         .resizable()
@@ -121,7 +124,23 @@ struct AnimeDetailView: View {
                 .padding(.vertical)
             }
         }
+        .alert("Aviso", isPresented: $showTrailerAlert) { // <--- Aquí faltaba el título (puedes poner "Error" o lo que quieras)
+            Button("Ok") {
+                // Acción al cerrar
+            }
+        } message: {
+            Text(showTrailerMessage ?? "Trailer no disponible")
+        }
         .background(Color.colorBackground)
+        .navigationTitle(anime.title)
+    }
+    func checkTrailer() {
+        if let url = URL(string: anime.trailer?.youtubeId ?? "") {
+            openURL(url)
+        }else {
+            showTrailerAlert = true
+            showTrailerMessage = "Trailer no disponible"
+        }
     }
 }
 

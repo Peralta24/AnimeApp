@@ -92,3 +92,17 @@ struct Pagination: Codable {
         case hasNextPage = "has_next_page"
     }
 }
+
+struct AnimeTrailer: Codable {
+    var youtubeId: String?
+    var url: String?
+    var embedUrl: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case youtubeId = "youtube_id"
+        case url
+        case embedUrl = "embed_url"
+    }
+    
+    
+}

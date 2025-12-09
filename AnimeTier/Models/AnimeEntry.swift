@@ -23,6 +23,7 @@ final class AnimeEntry: Codable {
     var year: Int?
     var genres: [Genre]?
     var popularity: Int?
+    var trailer: AnimeTrailer?
     
     enum CodingKeys: String, CodingKey {
         case id = "mal_id"
@@ -38,6 +39,7 @@ final class AnimeEntry: Codable {
         case year
         case genres
         case popularity
+        case trailer
     }
     
     required init(from decoder: any Decoder) throws {
@@ -55,6 +57,7 @@ final class AnimeEntry: Codable {
         self.year = try container.decodeIfPresent(Int.self, forKey: .year)
         self.genres = try container.decodeIfPresent([Genre].self, forKey: .genres)
         self.popularity = try container.decodeIfPresent(Int.self, forKey: .popularity)
+        self.trailer = try container.decodeIfPresent(AnimeTrailer.self, forKey: .trailer)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -76,9 +79,10 @@ final class AnimeEntry: Codable {
             try container.encodeNil(forKey: .genres)
         }
         try container.encode(popularity ?? 0, forKey: .popularity)
+        try container.encodeIfPresent(trailer, forKey: .trailer)
     }
     
-    init(id: Int, url: String, images: AnimeImages, title: String, titleEnglish: String?, type: String?, episodes: Int?, status: String?, score: Double?, synopsis: String?, year: Int?, genres: [Genre]?, popularity: Int?) {
+    init(id: Int, url: String, images: AnimeImages, title: String, titleEnglish: String?, type: String?, episodes: Int?, status: String?, score: Double?, synopsis: String?, year: Int?, genres: [Genre]?, popularity: Int?,trailer: AnimeTrailer?) {
         self.id = id
         self.url = url
         self.images = images
@@ -92,6 +96,7 @@ final class AnimeEntry: Codable {
         self.year = year
         self.genres = genres
         self.popularity = popularity
+        self.trailer = trailer
     }
     
     
@@ -113,6 +118,11 @@ final class AnimeEntry: Codable {
         synopsis: "Este es un anime de ejemplo para usar en tu proyecto.",
         year: 2020,
         genres: [Genre(id: 2, name: "nose")],
-        popularity: 2
+        popularity: 2,
+        trailer: AnimeTrailer(
+            youtubeId: "qig4KOK2R2g",
+            url: "https://www.youtube.com/watch?v=qig4KOK2R2g",
+            embedUrl: "https://www.youtube.com/embed/qig4KOK2R2g?enablejsapi=1&wmode=opaque&autoplay=1"
+        )
     )
 }
