@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import SwiftData
 struct AnimeDetailView: View {
     var anime: AnimeEntry
     @Environment(\.openURL) var openURL
@@ -91,6 +91,7 @@ struct AnimeDetailView: View {
                                         .foregroundStyle(.colorWords)
                                         .fontWeight(.bold)
                                     Text("Trailer")
+                                        .font(.caption)
                                         .foregroundStyle(.colorWords)
                                         .fontWeight(.black)
                                 }
@@ -111,23 +112,28 @@ struct AnimeDetailView: View {
                                     .overlay(
                                         Image(systemName: "plus")
                                             .font(.system(size: 18, weight: .bold))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.colorWords)
                                     )
                                     .shadow(radius: 4)
                             }
-                            
-                            
-                            
+                            VStack {
+                                Text(String(format:"%.1f",anime.score ?? 5.0))
+                                    .font(.title)
+                                    .fontWeight(.black)
+                                    .foregroundStyle(.colorTitle)
+                                Text("SCORE")
+                                    .font(.headline)
+                                    .foregroundStyle(.colorWords)
+                                
+                            }
                         }
-                        Text("\(anime.score ?? 5.0)")
                     }
                 }
                 .padding(.vertical)
             }
         }
-        .alert("Aviso", isPresented: $showTrailerAlert) { // <--- Aquí faltaba el título (puedes poner "Error" o lo que quieras)
+        .alert("Aviso", isPresented: $showTrailerAlert) {
             Button("Ok") {
-                // Acción al cerrar
             }
         } message: {
             Text(showTrailerMessage ?? "Trailer no disponible")
