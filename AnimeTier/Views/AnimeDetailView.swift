@@ -52,6 +52,7 @@ struct AnimeDetailView: View {
                                 .frame(width: 150, height: 150)
                             
                             
+                            
                         } else if phase.error != nil {
                             ZStack {
                                 Color.gray.opacity(0.2)
@@ -118,7 +119,7 @@ struct AnimeDetailView: View {
                             
                             
                         }
-                        
+                        Text("\(anime.score ?? 5.0)")
                     }
                 }
                 .padding(.vertical)

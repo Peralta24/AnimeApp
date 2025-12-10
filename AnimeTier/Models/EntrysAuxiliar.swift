@@ -23,8 +23,8 @@ final class AnimeImages: Codable, Hashable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(jpg, forKey: .jpg)
     }
-    init (imageUrl: String, largeImageUrl: String?) {
-        self.jpg = .init(imageUrl: imageUrl, largeImageUrl: largeImageUrl)
+    init (imageUrl: String, largeImageUrl: String?,smallImageUrl: String?) {
+        self.jpg = .init(imageUrl: imageUrl, largeImageUrl: largeImageUrl, smallImageUrl: smallImageUrl)
     }
 }
 
@@ -32,27 +32,32 @@ final class AnimeImages: Codable, Hashable {
 final class ImageURL: Codable, Hashable {
     var imageUrl: String
     var largeImageUrl: String?
+    var smallImageUrl: String?
     
     enum CodingKeys: String, CodingKey {
         case imageUrl = "image_url"
         case largeImageUrl = "large_image_url"
+        case smallImageUrl = "small_image_url"
     }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.imageUrl = try container.decode(String.self, forKey: .imageUrl)
         self.largeImageUrl = try container.decodeIfPresent(String.self, forKey: .largeImageUrl)
+        self.smallImageUrl = try container.decodeIfPresent(String.self, forKey: .smallImageUrl)
     }
         
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(imageUrl, forKey: .imageUrl)
         try container.encodeIfPresent(largeImageUrl, forKey: .largeImageUrl)
+        try container.encodeIfPresent(smallImageUrl, forKey: .smallImageUrl)
     }
     
-    init(imageUrl: String, largeImageUrl: String?) {
+    init(imageUrl: String, largeImageUrl: String?, smallImageUrl: String?) {
         self.imageUrl = imageUrl
         self.largeImageUrl = largeImageUrl
+        self.smallImageUrl = smallImageUrl
     }
 }
 

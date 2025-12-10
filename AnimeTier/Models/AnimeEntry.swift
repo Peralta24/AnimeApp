@@ -106,7 +106,8 @@ final class AnimeEntry: Codable {
         
         images: AnimeImages(
             imageUrl: "https://cdn.example.com/anime/example-small.jpg",
-            largeImageUrl: "https://cdn.example.com/anime/example-large.jpg"
+            largeImageUrl: "https://cdn.example.com/anime/example-large.jpg",
+            smallImageUrl: "https://cdn.example.com/anime/example-small.jpg"
         ),
         
         title: "Ejemplo Anime",
