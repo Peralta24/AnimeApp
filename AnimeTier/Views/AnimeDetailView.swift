@@ -13,6 +13,8 @@ struct AnimeDetailView: View {
     @State private var showTrailerAlert: Bool = false
     @State private var showTrailerMessage: String?
     
+    @State private var showAddSheet = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -104,7 +106,7 @@ struct AnimeDetailView: View {
                                     .fill(Color.purple.opacity(0.1))
                             )
                             Button(action: {
-                                print("Tapped")
+                                showAddSheet.toggle()
                             }) {
                                 Circle()
                                     .fill(.purple.opacity(0.1))
@@ -132,6 +134,9 @@ struct AnimeDetailView: View {
                 .padding(.vertical)
             }
         }
+        .sheet(isPresented: $showAddSheet, content: {
+            AddAnimeView(anime: anime)
+        })
         .alert("Aviso", isPresented: $showTrailerAlert) {
             Button("Ok") {
             }
