@@ -77,46 +77,61 @@ struct AddAnimeView: View {
                     Spacer()
                     
                     HStack(spacing:30) {
-                        VStack (spacing: 5){
-                            Image(systemName: "plus")
-                                .font(.system(size: 20,weight: .bold))
-                                .foregroundStyle(.colorWords)
-                                .circleIcon()
-                            Text("Favoritos")
-                                .font(.caption)
-                                .foregroundStyle(.colorWords)
+                        Button {
+                            
+                        }label: {
+                            VStack (spacing: 5){
+                                
+                                Image(systemName: "plus")
+                                    .font(.system(size: 20,weight: .bold))
+                                    .foregroundStyle(.colorWords)
+                                    .circleIcon()
+                                Text("Favoritos")
+                                    .font(.caption)
+                                    .foregroundStyle(.colorWords)
+                            }
                         }
-                        VStack(spacing:5) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 20,weight: .bold))
-                                .foregroundStyle(.colorWords)
-                                .circleIcon()
-                            Text("Ver mas tarde")
-                                .font(.caption)
-                                .foregroundStyle(.colorWords)
+                        Button {
+                            
+                        }label: {
+                            
+                            VStack(spacing:5) {
+                                Image(systemName: "clock")
+                                    .font(.system(size: 20,weight: .bold))
+                                    .foregroundStyle(.colorWords)
+                                    .circleIcon()
+                                Text("Ver mas tarde")
+                                    .font(.caption)
+                                    .foregroundStyle(.colorWords)
+                            }
                         }
-                        
-                        VStack(spacing:5) {
-                            Image(systemName: "heart")
-                                .font(.system(size: 20,weight: .bold))
-                                .foregroundStyle(.colorWords)
-                                .circleIcon()
-                            Text("Me gusta")
-                                .font(.caption)
-                                .foregroundStyle(.colorWords)
+                        Button {
+                            
+                        }label: {
+                            
+                            
+                            VStack(spacing:5) {
+                                Image(systemName: "heart")
+                                    .font(.system(size: 20,weight: .bold))
+                                    .foregroundStyle(.colorWords)
+                                    .circleIcon()
+                                Text("Me gusta")
+                                    .font(.caption)
+                                    .foregroundStyle(.colorWords)
+                            }
                         }
                     }
                     .padding()
                     
                     
                     Spacer()
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading){
-                            Button("Cancelar") {
-                                dismiss()
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading){
+                                Button("Cancelar") {
+                                    dismiss()
+                                }
                             }
                         }
-                    }
                 }
                 .padding()
             }
