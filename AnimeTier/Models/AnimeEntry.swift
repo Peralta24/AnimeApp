@@ -24,6 +24,10 @@ final class AnimeEntry: Codable {
     var genres: [Genre]?
     var popularity: Int?
     var trailer: AnimeTrailer?
+    var isFavorite: Bool = false
+    var isWatchLater: Bool = false
+    var isLiked: Bool = false
+
     
     enum CodingKeys: String, CodingKey {
         case id = "mal_id"
@@ -40,6 +44,9 @@ final class AnimeEntry: Codable {
         case genres
         case popularity
         case trailer
+        case isFavorite
+        case isWatchLater
+        case isLiked
     }
     
     required init(from decoder: any Decoder) throws {
@@ -58,6 +65,9 @@ final class AnimeEntry: Codable {
         self.genres = try container.decodeIfPresent([Genre].self, forKey: .genres)
         self.popularity = try container.decodeIfPresent(Int.self, forKey: .popularity)
         self.trailer = try container.decodeIfPresent(AnimeTrailer.self, forKey: .trailer)
+        self.isFavorite = try container.decodeIfPresent(Bool.self, forKey: .isFavorite) ?? false
+        self.isWatchLater = try container.decodeIfPresent(Bool.self, forKey: .isWatchLater) ?? false
+        self.isLiked = try container.decodeIfPresent(Bool.self, forKey: .isLiked) ?? false
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -80,9 +90,12 @@ final class AnimeEntry: Codable {
         }
         try container.encode(popularity ?? 0, forKey: .popularity)
         try container.encodeIfPresent(trailer, forKey: .trailer)
+        try container.encode(isFavorite, forKey: .isFavorite)
+        try container.encode(isWatchLater, forKey: .isWatchLater)
+        try container.encode(isLiked, forKey: .isLiked)
     }
     
-    init(id: Int, url: String, images: AnimeImages, title: String, titleEnglish: String?, type: String?, episodes: Int?, status: String?, score: Double?, synopsis: String?, year: Int?, genres: [Genre]?, popularity: Int?,trailer: AnimeTrailer?) {
+    init(id: Int, url: String, images: AnimeImages, title: String, titleEnglish: String?, type: String?, episodes: Int?, status: String?, score: Double?, synopsis: String?, year: Int?, genres: [Genre]?, popularity: Int?,trailer: AnimeTrailer?,isFavorite:Bool, isWatchLater:Bool, isLiked:Bool) {
         self.id = id
         self.url = url
         self.images = images
@@ -97,6 +110,9 @@ final class AnimeEntry: Codable {
         self.genres = genres
         self.popularity = popularity
         self.trailer = trailer
+        self.isFavorite = isFavorite
+        self.isWatchLater = isWatchLater
+        self.isLiked = isLiked
     }
     
     
@@ -124,6 +140,9 @@ final class AnimeEntry: Codable {
             youtubeId: "qig4KOK2R2g",
             url: "https://www.youtube.com/watch?v=qig4KOK2R2g",
             embedUrl: "https://www.youtube.com/embed/qig4KOK2R2g?enablejsapi=1&wmode=opaque&autoplay=1"
-        )
+        ),
+        isFavorite: false ,
+        isWatchLater: false ,
+        isLiked: false
     )
 }

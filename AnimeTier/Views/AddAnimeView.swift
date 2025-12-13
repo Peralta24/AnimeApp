@@ -28,6 +28,10 @@ extension View {
 }
 
 struct AddAnimeView: View {
+    @State var animesFavoritos: [AnimeEntry] = []
+    @State var animesVerMasTarde: [AnimeEntry] = []
+    @State var animesMeGusta: [AnimeEntry] = []
+    @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
     var anime: AnimeEntry
     var body: some View {
@@ -78,7 +82,7 @@ struct AddAnimeView: View {
                     
                     HStack(spacing:30) {
                         Button {
-                            
+                            agregarAnime(.favorito)
                         }label: {
                             VStack (spacing: 5){
                                 
@@ -92,7 +96,7 @@ struct AddAnimeView: View {
                             }
                         }
                         Button {
-                            
+                            agregarAnime(.verMasTarde)
                         }label: {
                             
                             VStack(spacing:5) {
@@ -106,7 +110,7 @@ struct AddAnimeView: View {
                             }
                         }
                         Button {
-                            
+                            agregarAnime(.meGusta)
                         }label: {
                             
                             
@@ -136,6 +140,25 @@ struct AddAnimeView: View {
                 .padding()
             }
         }
+    }
+    enum TipoColeccion {
+        case favorito
+        case verMasTarde
+        case meGusta
+    }
+    func agregarAnime(_ tipo: TipoColeccion) {
+
+        switch tipo {
+        case .favorito:
+            anime.isFavorite = true
+        case .verMasTarde:
+            anime.isWatchLater = true
+        case .meGusta:
+            anime.isLiked = true
+        }
+        
+        modelContext.insert(anime)
+        dismiss()
     }
 }
 

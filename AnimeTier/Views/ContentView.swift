@@ -165,6 +165,11 @@ struct ContentView: View {
                     .padding(.vertical)
                 }
             }
+            .toolbar {
+                NavigationLink("Ver colecciones"){
+                    ColeccionesView()
+                }
+            }
         }
         .task {
             await refreshAnimeLogic()
