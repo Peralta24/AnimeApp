@@ -8,19 +8,21 @@
 import SwiftUI
 import SwiftData
 
+enum RutaPrincipal: Hashable {
+    case colecciones
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
     
     @Query(sort: \AnimeEntry.title)
     private var allanimes: [AnimeEntry]
     
-    
     let limiteHorizontal = 6
     
     @Query(filter: #Predicate<AnimeEntry> { $0.score ?? 0.0 > 8.5 },
            sort: \AnimeEntry.score, order: .reverse)
     private var mejoresCalificados: [AnimeEntry]
-    
     
     @Query(sort: \AnimeEntry.popularity, order: .forward)
     private var masPopulares: [AnimeEntry]
@@ -39,18 +41,11 @@ struct ContentView: View {
                     
                     VStack(spacing: 30) {
                         
+                        // SECCIÓN EXPLORAR
                         VStack(alignment: .leading) {
                             NavigationLink(value:ExploreDestination.explorar){
-                                Text("Explorar")
-                                    .font(.title2.bold())
-                                    .foregroundStyle(.colorTitle)
-                                    .padding(.horizontal)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorWords)
+                                HeaderView(titulo: "Explorar")
                             }
-                            .padding(.horizontal)
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -64,19 +59,11 @@ struct ContentView: View {
                             }
                         }
                         
+                        // SECCIÓN MEJORES CALIFICADOS
                         VStack(alignment: .leading) {
                             NavigationLink(value: ExploreDestination.mejoresCalificados){
-                                Text("Mejores Calificados")
-                                    .font(.title2.bold())
-                                    .foregroundStyle(.colorTitle)
-                                    .padding(.horizontal)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorWords)
+                                HeaderView(titulo: "Mejores Calificados")
                             }
-                            .padding(.horizontal)
-                            
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -90,19 +77,11 @@ struct ContentView: View {
                             }
                         }
                         
+                        // SECCIÓN POPULARES
                         VStack(alignment: .leading) {
                             NavigationLink(value: ExploreDestination.masPopulares){
-                                Text("Animes más populares")
-                                    .font(.title2.bold())
-                                    .foregroundStyle(.colorTitle)
-                                    .padding(.horizontal)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorWords)
+                                HeaderView(titulo: "Animes más populares")
                             }
-                            .padding(.horizontal)
-                            
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -116,21 +95,11 @@ struct ContentView: View {
                             }
                         }
                         
-                        
+                        // SECCIÓN RECIENTES
                         VStack(alignment: .leading) {
                             NavigationLink(value: ExploreDestination.recientes){
-                                Text("Animes más nuevos")
-                                    .font(.title2.bold())
-                                    .foregroundStyle(.colorTitle)
-                                    .padding(.horizontal)
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.colorWords)
+                                HeaderView(titulo: "Animes más nuevos")
                             }
-                            .padding(.horizontal)
-                            
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -138,36 +107,40 @@ struct ContentView: View {
                                         NavigationLink(value:anime){
                                             AnimeViewCell(anime: anime)
                                         }
-                                        
                                     }
                                 }
                                 .padding(.horizontal)
                             }
                         }
                         .preferredColorScheme(.dark)
-                        
-                        .navigationDestination(for: AnimeEntry.self) { anime in
-                            AnimeDetailView(anime: anime)
-                        }
-                        .navigationDestination(for: ExploreDestination.self) { destino in
-                            switch destino {
-                            case .explorar:
-                                AllAnimesGrids(title:"Explorar",animes: allanimes)
-                            case .mejoresCalificados:
-                                AllAnimesGrids(title:"Mejores Calificados",animes: mejoresCalificados)
-                            case .masPopulares:
-                                AllAnimesGrids(title:"Mas populares",animes: masPopulares)
-                            case .recientes:
-                                AllAnimesGrids(title:"Mas recientes",animes: soloRecientes)
-                            }
-                        }
                     }
                     .padding(.vertical)
+                }             }
+            .navigationDestination(for: AnimeEntry.self) { anime in
+                AnimeDetailView(anime: anime)
+            }
+            .navigationDestination(for: ExploreDestination.self) { destino in
+                switch destino {
+                case .explorar:
+                    AllAnimesGrids(title:"Explorar",animes: allanimes)
+                case .mejoresCalificados:
+                    AllAnimesGrids(title:"Mejores Calificados",animes: mejoresCalificados)
+                case .masPopulares:
+                    AllAnimesGrids(title:"Mas populares",animes: masPopulares)
+                case .recientes:
+                    AllAnimesGrids(title:"Mas recientes",animes: soloRecientes)
+                }
+            }
+            .navigationDestination(for: RutaPrincipal.self) { ruta in
+                if ruta == .colecciones {
+                    ColeccionesView()
                 }
             }
             .toolbar {
-                NavigationLink("Ver colecciones"){
-                    ColeccionesView()
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: RutaPrincipal.colecciones) {
+                        Text("Ver colecciones")
+                    }
                 }
             }
         }
@@ -176,36 +149,45 @@ struct ContentView: View {
         }
     }
     
+    // Helper  de los títulos
+    func HeaderView(titulo: String) -> some View {
+        HStack {
+            Text(titulo)
+                .font(.title2.bold())
+                .foregroundStyle(.colorTitle)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.colorWords)
+        }
+        .padding(.horizontal)
+    }
+    
     func refreshAnimeLogic() async {
-        //Verificacion de SwiftData
         do {
-            let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
-            
-            if count > 50 {
-                print("Swift Data ya contiene \(count) animes")
-            }else if count > 0 {
-                print("Datos incompletos en Swift Data, se procederá a actualizar los datos")
-                try? modelContext.delete(model: AnimeEntry.self)
-            }
-        } catch {
-            print("Error al verficar la base de datos: \(error)")
-        }
-        
-        do {
-            //Obtener los datos limpios del manager
-            let nuevosAnimes = try await NetworkManager.shared.fetchTopAnimes()
-            
-            await MainActor.run {
-                print("Guardando \(nuevosAnimes.count) animes en SwiftData")
-                for anime in nuevosAnimes {
-                    modelContext.insert(anime)
-                }
-                try? modelContext.save()
-                print("Insercion exitosa de animes en SwiftData")
-            }
-        } catch {
-            print("Error descargando animes \(error.localizedDescription)")
-        }
+             let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
+             if count > 50 {
+                 print("Swift Data ya contiene \(count) animes")
+             }else if count > 0 {
+                 print("Datos incompletos en Swift Data, se procederá a actualizar los datos")
+                 try? modelContext.delete(model: AnimeEntry.self)
+             }
+         } catch {
+             print("Error al verficar la base de datos: \(error)")
+         }
+         
+         do {
+             let nuevosAnimes = try await NetworkManager.shared.fetchTopAnimes()
+             await MainActor.run {
+                 print("Guardando \(nuevosAnimes.count) animes en SwiftData")
+                 for anime in nuevosAnimes {
+                     modelContext.insert(anime)
+                 }
+                 try? modelContext.save()
+                 print("Insercion exitosa de animes en SwiftData")
+             }
+         } catch {
+             print("Error descargando animes \(error.localizedDescription)")
+         }
     }
 }
 

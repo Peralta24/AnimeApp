@@ -17,17 +17,16 @@ struct AllAnimesGrids: View {
         ZStack {
             Color.colorBackground
                 .ignoresSafeArea()
-            ScrollView(.vertical, showsIndicators: false){                LazyVGrid(columns: colums) {
-                ForEach(animes){anime in
-                    NavigationLink(value:anime){
-                        AnimeViewCell(anime: anime)
+            ScrollView(.vertical, showsIndicators: false){
+                LazyVGrid(columns: colums) {
+                    ForEach(animes){anime in
+                        NavigationLink(value:anime){
+                            AnimeViewCell(anime: anime)
+                        }
                     }
                 }
             }
-            }
-            .navigationDestination(for: AnimeEntry.self) { anime in
-                AnimeDetailView(anime: anime)
-            }
+            
         }
         .navigationTitle(title)
         .preferredColorScheme(.dark)

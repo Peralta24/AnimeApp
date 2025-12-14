@@ -86,18 +86,10 @@ struct AnimeShelfView: View {
             ScrollView(.horizontal, showsIndicators: false){
                 HStack(spacing:15){
                     ForEach(animes) {anime in
-                        VStack {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 120, height: 180)
-                                .overlay(
-                                    Text(anime.title)
-                                        .font(.caption)
-                                        .foregroundColor(.white)
-                                        .padding(5),
-                                    alignment: .bottom
-                                )
+                        NavigationLink(value:anime) {
+                            AnimeViewCell(anime: anime)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)
