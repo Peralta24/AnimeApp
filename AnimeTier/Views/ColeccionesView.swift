@@ -8,6 +8,11 @@
 import SwiftUI
 import SwiftData
 
+struct RutaColeccion: Hashable {
+    let titulo: String
+    let animes: [AnimeEntry]
+}
+
 struct ColeccionesView: View {
     @Query(filter: #Predicate<AnimeEntry>{$0.isFavorite})
     var animeFavoritos: [AnimeEntry]
@@ -65,7 +70,7 @@ struct AnimeShelfView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10){
             
-            NavigationLink(destination: Text("Vista completa de \(titulo)")) {
+            NavigationLink(value: RutaColeccion(titulo: titulo, animes: animes)) {
                 HStack {
                     Label(titulo, systemImage: icon)
                         .font(.title3)
@@ -94,6 +99,10 @@ struct AnimeShelfView: View {
                 }
                 .padding(.horizontal)
             }
+            .navigationDestination(for: RutaColeccion.self) { ruta in
+                AllAnimesGrids(title: ruta.titulo, animes: ruta.animes)
+            }
+
         }
         
     }

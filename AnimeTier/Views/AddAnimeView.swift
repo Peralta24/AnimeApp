@@ -137,6 +137,10 @@ struct AddAnimeView: View {
                             Button("Ok") {
                                 
                             }
+                            NavigationLink("Coleccion") {
+                                ColeccionesView()
+                            }
+                            
                         }message: {
                             Text(messageAlert)
                         }
@@ -158,7 +162,7 @@ struct AddAnimeView: View {
         case meGusta
     }
     func agregarAnime(_ tipo: TipoColeccion) {
-
+        
         switch tipo {
         case .favorito:
             if anime.isFavorite {
@@ -166,8 +170,8 @@ struct AddAnimeView: View {
             } else {
                 messageAlert = "Agregado a favoritos"
                 anime.isFavorite = true
-
-
+                
+                
             }
         case .verMasTarde:
             if anime.isWatchLater {
@@ -175,8 +179,8 @@ struct AddAnimeView: View {
             } else {
                 messageAlert = "Agregado a ver mas tarde"
                 anime.isWatchLater = true
-
-
+                
+                
             }
         case .meGusta:
             if anime.isLiked {
@@ -184,16 +188,13 @@ struct AddAnimeView: View {
             } else {
                 messageAlert = "Agregado a me gusta"
                 anime.isLiked = true
-
-
+                
+                
             }
         }
         
         showAlert = true
         modelContext.insert(anime)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            dismiss()
-        }
     }
 }
 
