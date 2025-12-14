@@ -33,6 +33,10 @@ struct AddAnimeView: View {
     @State var animesMeGusta: [AnimeEntry] = []
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
+    
+    @State private var showAlert = false
+    @State private var messageAlert = ""
+    
     var anime: AnimeEntry
     var body: some View {
         NavigationStack{
@@ -129,6 +133,13 @@ struct AddAnimeView: View {
                     
                     
                     Spacer()
+                        .alert("Anime agregado!",isPresented: $showAlert) {
+                            Button("Ok") {
+                                
+                            }
+                        }message: {
+                            Text(messageAlert)
+                        }
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading){
                                 Button("Cancelar") {
@@ -150,15 +161,39 @@ struct AddAnimeView: View {
 
         switch tipo {
         case .favorito:
-            anime.isFavorite = true
+            if anime.isFavorite {
+                messageAlert = "Ya esta en favoritos"
+            } else {
+                messageAlert = "Agregado a favoritos"
+                anime.isFavorite = true
+
+
+            }
         case .verMasTarde:
-            anime.isWatchLater = true
+            if anime.isWatchLater {
+                messageAlert = "Ya esta en ver mas tarde"
+            } else {
+                messageAlert = "Agregado a ver mas tarde"
+                anime.isWatchLater = true
+
+
+            }
         case .meGusta:
-            anime.isLiked = true
+            if anime.isLiked {
+                messageAlert = "Ya esta en me gusta"
+            } else {
+                messageAlert = "Agregado a me gusta"
+                anime.isLiked = true
+
+
+            }
         }
         
+        showAlert = true
         modelContext.insert(anime)
-        dismiss()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            dismiss()
+        }
     }
 }
 

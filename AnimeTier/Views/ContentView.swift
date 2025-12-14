@@ -139,7 +139,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(value: RutaPrincipal.colecciones) {
-                        Text("Ver colecciones")
+                        Label("Tus colecciones", systemImage: "play.square.stack")
                     }
                 }
             }
