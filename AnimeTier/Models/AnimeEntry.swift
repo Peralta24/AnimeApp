@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 final class AnimeEntry: Codable {
-    var id: Int
+    @Attribute(.unique) var id: Int
     var url: String
     var images: AnimeImages
     var title: String

@@ -163,31 +163,62 @@ struct ContentView: View {
     }
     
     func refreshAnimeLogic() async {
+        
         do {
-             let count = try modelContext.fetch(FetchDescriptor<AnimeEntry>()).count
-             if count > 50 {
-                 print("Swift Data ya contiene \(count) animes")
-             }else if count > 0 {
-                 print("Datos incompletos en Swift Data, se procederá a actualizar los datos")
-                 try? modelContext.delete(model: AnimeEntry.self)
-             }
-         } catch {
-             print("Error al verficar la base de datos: \(error)")
-         }
-         
-         do {
-             let nuevosAnimes = try await NetworkManager.shared.fetchTopAnimes()
-             await MainActor.run {
-                 print("Guardando \(nuevosAnimes.count) animes en SwiftData")
-                 for anime in nuevosAnimes {
-                     modelContext.insert(anime)
-                 }
-                 try? modelContext.save()
-                 print("Insercion exitosa de animes en SwiftData")
-             }
-         } catch {
-             print("Error descargando animes \(error.localizedDescription)")
-         }
+            let descriptor = FetchDescriptor<AnimeEntry>()
+            let count = try modelContext.fetchCount(descriptor)
+            
+            if count > 0 {
+                print("Ya existen datos locales. No se descargara de nuevo")
+                return
+            }
+            
+        } catch {
+            print("Error verifique la base de datos: \(error.localizedDescription)")
+        }
+        
+        print("Iniciando descarga de la API")
+        
+        do {
+            
+            let animesDeLaApi = try await NetworkManager.shared.fetchTopAnimes()
+            
+            await MainActor.run {
+                for animeNuevo in animesDeLaApi {
+                    
+                    let idBusqueda  = animeNuevo.id
+                    let descriptor = FetchDescriptor<AnimeEntry>(
+                        predicate: #Predicate {$0.id == idBusqueda}
+                    )
+                    
+                    do {
+                        let resultado = try modelContext.fetch(descriptor)
+                        
+                        if let animeExistente = resultado.first {
+                            
+                            animeExistente.score = animeNuevo.score
+                            animeExistente.episodes = animeNuevo.episodes
+                            animeExistente.popularity = animeNuevo.popularity
+                            animeExistente.status = animeNuevo.status
+                            animeExistente.images = animeNuevo.images
+                            
+                            print("Actualizando anime ")
+                            
+                        } else {
+                            modelContext.insert(animeNuevo)
+                            print("Insertando un nuevo anime")
+                        }
+                    } catch {
+                        print("Error buscando anime existente: \(error.localizedDescription)")
+                    }
+                }
+                
+                try? modelContext.save()
+                print("Sincronizando datos con la base de datos local")
+            }
+        } catch {
+            print("Error critico en la descarga")
+        }
     }
 }
 
