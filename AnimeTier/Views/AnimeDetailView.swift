@@ -132,7 +132,32 @@ struct AnimeDetailView: View {
                     }
                 }
                 .padding(.vertical)
+
             }
+            ScrollView(.horizontal,showsIndicators: false){
+                HStack {
+                    AnimeDetailStats(title: "Tipo", value: anime.type ?? "N/A")
+                    AnimeDetailStats(title: "Estatus", value: anime.status ?? "N/A")
+                    AnimeDetailStats(title: "Episodios", value: String(anime.episodes ?? 0))
+                    ForEach(anime.genres ?? [], id: \.self) {genre in
+                        AnimeDetailStats(title: "Genero", value: genre.name)
+                    }
+                    AnimeDetailStats(title: "Ranking Mundial", value: String(anime.popularity ?? 0))
+                }
+                .padding()
+                
+            }
+            VStack {
+                Text("Sinopsis")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.colorTitle)
+                Text(anime.synopsis ?? "")
+                    .font(.subheadline)
+                    .foregroundStyle(.colorWords)
+                    .lineSpacing(4)
+            }
+            .padding()
         }
         .sheet(isPresented: $showAddSheet, content: {
             AddAnimeView(anime: anime)
