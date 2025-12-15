@@ -71,11 +71,18 @@ struct AnimeDetailView: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
-                    VStack (alignment: .leading,spacing: 20){
+                    VStack (alignment: .leading,spacing: 10){
                         Text(anime.titleEnglish ?? anime.title)
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundStyle(.colorTitle)
+                        
+                        Text("Fecha: \(String(anime.year ?? 0))")
+                            .font(.caption)
+                            .foregroundStyle(.colorWords)
+
+
+                        
                         Text(anime.title)
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -132,7 +139,7 @@ struct AnimeDetailView: View {
                     }
                 }
                 .padding(.vertical)
-
+                
             }
             ScrollView(.horizontal,showsIndicators: false){
                 HStack {
@@ -147,6 +154,7 @@ struct AnimeDetailView: View {
                 .padding()
                 
             }
+            .padding(.top)
             VStack {
                 Text("Sinopsis")
                     .font(.headline)
@@ -158,6 +166,10 @@ struct AnimeDetailView: View {
                     .lineSpacing(4)
             }
             .padding()
+            
+            VStack(alignment:.leading) {
+           
+            }
         }
         .sheet(isPresented: $showAddSheet, content: {
             AddAnimeView(anime: anime)
