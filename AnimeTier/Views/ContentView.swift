@@ -4,7 +4,7 @@
 //
 //  Created by Jose Rafael Peralta Martinez on 02/12/25.
 //
-
+import LocalAuthentication
 import SwiftUI
 import SwiftData
 
@@ -13,6 +13,8 @@ enum RutaPrincipal: Hashable {
 }
 
 struct ContentView: View {
+    
+    @State private var isUnlocked = false
     @Environment(\.modelContext) var modelContext
     
     @Query(sort: \AnimeEntry.title)
@@ -147,6 +149,7 @@ struct ContentView: View {
         .task {
             await refreshAnimeLogic()
         }
+        .onAppear(perform: authenticate)
     }
     
     // Helper  de los títulos
@@ -164,7 +167,7 @@ struct ContentView: View {
     
     func refreshAnimeLogic() async {
         
-        do {
+        do {    
             let descriptor = FetchDescriptor<AnimeEntry>()
             let count = try modelContext.fetchCount(descriptor)
             
@@ -218,6 +221,22 @@ struct ContentView: View {
             }
         } catch {
             print("Error critico en la descarga")
+        }
+    }
+    
+    func authenticate() {
+        
+        let context = LAContext()
+        var error: NSError?
+        
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error){
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "We need to unlock your data") {succes, error in
+                if succes{
+                    isUnlocked = true
+                } else {
+                    
+                }
+            }
         }
     }
 }
