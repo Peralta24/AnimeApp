@@ -181,7 +181,6 @@ struct AnimeDetailView: View {
             Text(showTrailerMessage ?? "Trailer no disponible")
         }
         .background(Color.colorBackground)
-        .navigationTitle(anime.title)
     }
     func checkTrailer() {
         if let url = URL(string: anime.trailer?.youtubeId ?? "") {

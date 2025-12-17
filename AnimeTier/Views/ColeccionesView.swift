@@ -58,6 +58,12 @@ struct ColeccionesView: View {
             }
         }
         .navigationTitle("Colecciones")
+        .navigationDestination(for: AnimeEntry.self, destination: { anime in
+            AnimeDetailView(anime: anime)
+        })
+        .navigationDestination(for: RutaColeccion.self) { ruta in
+            AllAnimesGrids(title: ruta.titulo, animes: ruta.animes)
+        }
     }
 }
 
@@ -99,9 +105,7 @@ struct AnimeShelfView: View {
                 }
                 .padding(.horizontal)
             }
-            .navigationDestination(for: RutaColeccion.self) { ruta in
-                AllAnimesGrids(title: ruta.titulo, animes: ruta.animes)
-            }
+
 
         }
         
