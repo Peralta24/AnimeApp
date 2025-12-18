@@ -83,9 +83,10 @@ struct PerfilView: View {
                         Button {
                             showFormInfo = true
                         } label: {
-                            Image(systemName: "pencil.circle.fill")
+                            Image(systemName: "pencil.circle")
                                 .font(.title2)
                                 .foregroundStyle(.colorTitle)
+                                .padding(.bottom,80)
                         }
                     }
                     .padding()
@@ -94,7 +95,6 @@ struct PerfilView: View {
                             .fill(Color.black.opacity(0.25))
                     )
                     
-                    // MARK: - Información
                     VStack(alignment: .leading, spacing: 14) {
                         
                         infoLabel("Fecha de nacimiento", icon: "calendar")
