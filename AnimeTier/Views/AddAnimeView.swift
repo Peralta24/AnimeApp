@@ -34,10 +34,8 @@ struct AddAnimeView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
     
-    @State private var showAlert = false
-    @State private var messageAlert = ""
-    
     var anime: AnimeEntry
+    
     var body: some View {
         NavigationStack{
             ZStack {
@@ -90,7 +88,7 @@ struct AddAnimeView: View {
                         }label: {
                             VStack (spacing: 5){
                                 
-                                Image(systemName: "plus")
+                                Image(systemName: anime.isFavorite ? "bookmark.fill" :"bookmark")
                                     .font(.system(size: 20,weight: .bold))
                                     .foregroundStyle(.colorWords)
                                     .circleIcon()
@@ -104,7 +102,7 @@ struct AddAnimeView: View {
                         }label: {
                             
                             VStack(spacing:5) {
-                                Image(systemName: "clock")
+                                Image(systemName: anime.isWatchLater ? "clock.fill" :"clock")
                                     .font(.system(size: 20,weight: .bold))
                                     .foregroundStyle(.colorWords)
                                     .circleIcon()
@@ -119,7 +117,7 @@ struct AddAnimeView: View {
                             
                             
                             VStack(spacing:5) {
-                                Image(systemName: "heart")
+                                Image(systemName: anime.isLiked ? "heart.fill" :"heart")
                                     .font(.system(size: 20,weight: .bold))
                                     .foregroundStyle(.colorWords)
                                     .circleIcon()
@@ -133,17 +131,6 @@ struct AddAnimeView: View {
                     
                     
                     Spacer()
-                        .alert("Anime agregado!",isPresented: $showAlert) {
-                            Button("Ok") {
-                                
-                            }
-                            NavigationLink("Coleccion") {
-                                ColeccionesView()
-                            }
-                            
-                        }message: {
-                            Text(messageAlert)
-                        }
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading){
                                 Button("Cancelar") {
@@ -166,34 +153,26 @@ struct AddAnimeView: View {
         switch tipo {
         case .favorito:
             if anime.isFavorite {
-                messageAlert = "Ya esta en favoritos"
+                anime.isFavorite = false
             } else {
-                messageAlert = "Agregado a favoritos"
                 anime.isFavorite = true
-                
-                
             }
         case .verMasTarde:
             if anime.isWatchLater {
-                messageAlert = "Ya esta en ver mas tarde"
+                anime.isWatchLater = false
             } else {
-                messageAlert = "Agregado a ver mas tarde"
                 anime.isWatchLater = true
-                
-                
             }
         case .meGusta:
             if anime.isLiked {
-                messageAlert = "Ya esta en me gusta"
+                anime.isLiked = false
             } else {
-                messageAlert = "Agregado a me gusta"
                 anime.isLiked = true
                 
                 
             }
         }
         
-        showAlert = true
         modelContext.insert(anime)
     }
 }
