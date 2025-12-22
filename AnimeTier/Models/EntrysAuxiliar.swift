@@ -111,3 +111,4 @@ struct AnimeTrailer: Codable {
     
     
 }
+

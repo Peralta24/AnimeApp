@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 enum RutaPrincipal: Hashable {
-    case colecciones
+    case suscripcion
 }
 
 struct HomeView: View {
@@ -131,17 +131,19 @@ struct HomeView: View {
                 case .recientes:
                     AllAnimesGrids(title:"Mas recientes",animes: soloRecientes)
                 }
+                
             }
             .navigationDestination(for: RutaPrincipal.self) { ruta in
-                if ruta == .colecciones {
-                    ColeccionesView()
+                if ruta == .suscripcion {
+                    SubscriptionView()
                 }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(value: RutaPrincipal.colecciones) {
-                        Label("Tus colecciones", systemImage: "play.square.stack")
+                    NavigationLink(value: RutaPrincipal.suscripcion) {
+                        Label("Premium Plan", systemImage: "crown")
                     }
+                    .tint(.yellow)
                 }
             }
         }

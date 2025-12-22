@@ -90,7 +90,7 @@ struct AddAnimeView: View {
                                 
                                 Image(systemName: anime.isFavorite ? "bookmark.fill" :"bookmark")
                                     .font(.system(size: 20,weight: .bold))
-                                    .foregroundStyle(.colorWords)
+                                    .foregroundStyle(anime.isFavorite ? .yellow :.colorWords)
                                     .circleIcon()
                                 Text("Favoritos")
                                     .font(.caption)
@@ -104,7 +104,7 @@ struct AddAnimeView: View {
                             VStack(spacing:5) {
                                 Image(systemName: anime.isWatchLater ? "clock.fill" :"clock")
                                     .font(.system(size: 20,weight: .bold))
-                                    .foregroundStyle(.colorWords)
+                                    .foregroundStyle(anime.isWatchLater ? .blue : .colorWords)
                                     .circleIcon()
                                 Text("Ver mas tarde")
                                     .font(.caption)
@@ -119,7 +119,7 @@ struct AddAnimeView: View {
                             VStack(spacing:5) {
                                 Image(systemName: anime.isLiked ? "heart.fill" :"heart")
                                     .font(.system(size: 20,weight: .bold))
-                                    .foregroundStyle(.colorWords)
+                                    .foregroundStyle(anime.isLiked ? .red : .colorWords)
                                     .circleIcon()
                                 Text("Me gusta")
                                     .font(.caption)
