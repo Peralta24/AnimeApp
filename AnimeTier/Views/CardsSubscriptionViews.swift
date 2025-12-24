@@ -67,7 +67,13 @@ struct CardsSubscriptionViews: View {
             .padding(.horizontal, 12)
 
             
-
+            Text("Buy now")
+                .padding(5)
+                .background(.purple)
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundStyle(.colorTitle)
+                .clipShape(.capsule)
 
             Spacer()
         }

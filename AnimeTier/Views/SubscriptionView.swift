@@ -34,7 +34,11 @@ struct SubscriptionView: View {
                     .padding(.horizontal, 32)
                     
                     
-                    CardsSubscriptionViews(planSuscripcion: "Normal", precio: 21.90)
+                    CardsSubscriptionViews(planSuscripcion: "Mensual", precio: 9.99)
+                    
+                    CardsSubscriptionViews(planSuscripcion: "Anual", precio: 19.99)
+                    
+                    CardsSubscriptionViews(planSuscripcion: "Premium", precio: 29.99)
                 }
                 .padding(.top, 16)
             }
