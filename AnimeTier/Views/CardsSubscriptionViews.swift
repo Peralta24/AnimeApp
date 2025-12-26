@@ -63,12 +63,12 @@ struct CardsSubscriptionViews: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .frame(height: 60)
+            .frame(height: 80)
             .padding(.horizontal, 12)
 
             
-            Text("Buy now")
-                .padding(5)
+            Text("Suscribirse")
+                .padding(10)
                 .background(.purple)
                 .font(.title3)
                 .fontWeight(.medium)
@@ -77,7 +77,7 @@ struct CardsSubscriptionViews: View {
 
             Spacer()
         }
-        .frame(width: 220, height: 300)
+        .frame(width: 300, height: 320)
         .background(
             RoundedRectangle(cornerRadius: 24)
                 .fill(Color.colorCardBackground.opacity(0.9))

@@ -8,18 +8,15 @@ import LocalAuthentication
 import SwiftUI
 import SwiftData
 
-enum RutaPrincipal: Hashable {
-    case suscripcion
-}
-
 struct HomeView: View {
-    @State private var isUnlocked = false
+    
+    @State private var vm = HomeViewModel()
+
     @Environment(\.modelContext) var modelContext
     
     @Query(sort: \AnimeEntry.title)
     private var allanimes: [AnimeEntry]
     
-    let limiteHorizontal = 6
     
     @Query(filter: #Predicate<AnimeEntry> { $0.score ?? 0.0 > 8.5 },
            sort: \AnimeEntry.score, order: .reverse)
@@ -50,7 +47,7 @@ struct HomeView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(allanimes.prefix(limiteHorizontal)) { anime in
+                                    ForEach(allanimes.prefix(vm.limiteHorizontal)) { anime in
                                         NavigationLink(value: anime){
                                             AnimeHeroView(anime: anime)
                                         }
@@ -68,7 +65,7 @@ struct HomeView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(mejoresCalificados.prefix(limiteHorizontal)) { anime in
+                                    ForEach(mejoresCalificados.prefix(vm.limiteHorizontal)) { anime in
                                         NavigationLink(value: anime) {
                                             AnimeViewCell(anime: anime)
                                         }
@@ -86,7 +83,7 @@ struct HomeView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(masPopulares.prefix(limiteHorizontal)) { anime in
+                                    ForEach(masPopulares.prefix(vm.limiteHorizontal)) { anime in
                                         NavigationLink(value:anime){
                                             AnimeViewCell(anime: anime)
                                         }
@@ -104,7 +101,7 @@ struct HomeView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(soloRecientes.prefix(limiteHorizontal)) { anime in
+                                    ForEach(soloRecientes.prefix(vm.limiteHorizontal)) { anime in
                                         NavigationLink(value:anime){
                                             AnimeViewCell(anime: anime)
                                         }
@@ -148,7 +145,7 @@ struct HomeView: View {
             }
         }
         .task {
-            await refreshAnimeLogic()
+            await vm.refreshAnimeLogic(using: modelContext)
         }
 //        .onAppear(perform: authenticate)
     }
@@ -166,80 +163,7 @@ struct HomeView: View {
         .padding(.horizontal)
     }
     
-    func refreshAnimeLogic() async {
-        
-        do {
-            let descriptor = FetchDescriptor<AnimeEntry>()
-            let count = try modelContext.fetchCount(descriptor)
-            
-            if count > 0 {
-                print("Ya existen datos locales. No se descargara de nuevo")
-                return
-            }
-            
-        } catch {
-            print("Error verifique la base de datos: \(error.localizedDescription)")
-        }
-        
-        print("Iniciando descarga de la API")
-        
-        do {
-            
-            let animesDeLaApi = try await NetworkManager.shared.fetchTopAnimes()
-            
-            await MainActor.run {
-                for animeNuevo in animesDeLaApi {
-                    
-                    let idBusqueda  = animeNuevo.id
-                    let descriptor = FetchDescriptor<AnimeEntry>(
-                        predicate: #Predicate {$0.id == idBusqueda}
-                    )
-                    
-                    do {
-                        let resultado = try modelContext.fetch(descriptor)
-                        
-                        if let animeExistente = resultado.first {
-                            
-                            animeExistente.score = animeNuevo.score
-                            animeExistente.episodes = animeNuevo.episodes
-                            animeExistente.popularity = animeNuevo.popularity
-                            animeExistente.status = animeNuevo.status
-                            animeExistente.images = animeNuevo.images
-                            
-                            print("Actualizando anime ")
-                            
-                        } else {
-                            modelContext.insert(animeNuevo)
-                            print("Insertando un nuevo anime")
-                        }
-                    } catch {
-                        print("Error buscando anime existente: \(error.localizedDescription)")
-                    }
-                }
-                
-                try? modelContext.save()
-                print("Sincronizando datos con la base de datos local")
-            }
-        } catch {
-            print("Error critico en la descarga")
-        }
-    }
     
-//    func authenticate() {
-//        
-//        let context = LAContext()
-//        var error: NSError?
-//        
-//        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error){
-//            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "We need to unlock your data") {succes, error in
-//                if succes{
-//                    isUnlocked = true
-//                } else {
-//                    
-//                }
-//            }
-//        }
-//    }
 }
 
 
