@@ -11,15 +11,7 @@ import SwiftData
 
 struct PerfilView: View {
 
-    @State private var imageProfileSelect: PhotosPickerItem?
-    @State private var processedImage: Image?
-
-    @State private var showFormInfo = false
-    @State private var nombreUsuario: String = ""
-    @State private var tituloUsuario: String = ""
-    @State private var fechaNacimiento: Date = .now
-    @State private var generoFavoritos: String = ""
-    @State private var descripcionUsuario: String = ""
+    @State private var vm = PerfilViewModel()
     
     @Query(filter: #Predicate<AnimeEntry> { $0.isFavorite })
     var animeFavoritos: [AnimeEntry]
@@ -34,9 +26,9 @@ struct PerfilView: View {
                     HStack(spacing: 24) {
                         
                         ZStack(alignment: .topTrailing) {
-                            PhotosPicker(selection: $imageProfileSelect) {
-                                if let processedImage {
-                                    processedImage
+                            PhotosPicker(selection: $vm.imageProfileSelect) {
+                                if let image = vm.processedImage {
+                                    image
                                         .resizable()
                                         .scaledToFill()
                                 } else {
@@ -50,10 +42,10 @@ struct PerfilView: View {
                             .frame(width: 110, height: 110)
                             .clipShape(Circle())
                             .buttonStyle(.plain)
-                            .onChange(of: imageProfileSelect, loadImage)
+                            .onChange(of: vm.imageProfileSelect, vm.loadImage)
                             
-                            if processedImage != nil {
-                                Button(action: removeImage) {
+                            if vm.processedImage != nil {
+                                Button(action: vm.removeImage) {
                                     Image(systemName: "xmark.circle.fill")
                                         .font(.title3)
                                         .foregroundStyle(.red)
@@ -65,23 +57,23 @@ struct PerfilView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(nombreUsuario.isEmpty ? "Tu nombre" : nombreUsuario)
+                            Text(vm.nombreUsuario.isEmpty ? "Tu nombre" : vm.nombreUsuario)
                                 .font(.title2.bold())
                                 .foregroundStyle(
-                                    nombreUsuario.isEmpty ? .gray.opacity(0.6) : .colorTitle
+                                    vm.nombreUsuario.isEmpty ? .gray.opacity(0.6) : .colorTitle
                                 )
                             
-                            Text(tituloUsuario.isEmpty ? "Sin título personalizado" : tituloUsuario)
+                            Text(vm.tituloUsuario.isEmpty ? "Sin título personalizado" : vm.tituloUsuario)
                                 .font(.subheadline)
                                 .foregroundStyle(
-                                    tituloUsuario.isEmpty ? .gray.opacity(0.6) : .colorWords
+                                    vm.tituloUsuario.isEmpty ? .gray.opacity(0.6) : .colorWords
                                 )
                         }
                         
                         Spacer()
                         
                         Button {
-                            showFormInfo = true
+                            vm.showFormInfo = true
                         } label: {
                             Image(systemName: "pencil.circle")
                                 .font(.title2)
@@ -98,7 +90,7 @@ struct PerfilView: View {
                     VStack(alignment: .leading, spacing: 14) {
                         
                         infoLabel("Fecha de nacimiento", icon: "calendar")
-                        Text(fechaNacimiento.formatted(date: .long, time: .omitted))
+                        Text(vm.fechaNacimiento.formatted(date: .long, time: .omitted))
                             .font(.headline)
                             .foregroundStyle(.colorTitle)
                         
@@ -120,22 +112,22 @@ struct PerfilView: View {
                         Divider().opacity(0.3)
                         
                         infoLabel("Género favorito", icon: "sparkles")
-                        Text(generoFavoritos.isEmpty ? "No especificado" : generoFavoritos)
+                        Text(vm.generoFavoritos.isEmpty ? "No especificado" : vm.generoFavoritos)
                             .font(.headline)
                             .foregroundStyle(
-                                generoFavoritos.isEmpty ? .gray.opacity(0.6) : .colorTitle
+                                vm.generoFavoritos.isEmpty ? .gray.opacity(0.6) : .colorTitle
                             )
                         
                         Divider().opacity(0.3)
                         
                         infoLabel("Descripción", icon: "text.alignleft")
-                        Text(descripcionUsuario.isEmpty
+                        Text(vm.descripcionUsuario.isEmpty
                              ? "Aún no has agregado una descripción"
-                             : descripcionUsuario
+                             : vm.descripcionUsuario
                         )
                         .font(.body)
                         .foregroundStyle(
-                            descripcionUsuario.isEmpty ? .gray.opacity(0.6) : .colorTitle
+                            vm.descripcionUsuario.isEmpty ? .gray.opacity(0.6) : .colorTitle
                         )
                     }
                     .padding()
@@ -157,13 +149,13 @@ struct PerfilView: View {
             .scrollBounceBehavior(.basedOnSize)
 
             .navigationTitle("Perfil")
-            .sheet(isPresented: $showFormInfo) {
+            .sheet(isPresented: $vm.showFormInfo) {
                 FormUserView(
-                    fechaNacimiento: $fechaNacimiento,
-                    nombreUsuario: $nombreUsuario,
-                    tituloUsuario: $tituloUsuario,
-                    generoFavorito: $generoFavoritos,
-                    descripcion: $descripcionUsuario
+                    fechaNacimiento: $vm.fechaNacimiento,
+                    nombreUsuario: $vm.nombreUsuario,
+                    tituloUsuario: $vm.tituloUsuario,
+                    generoFavorito: $vm.generoFavoritos,
+                    descripcion: $vm.descripcionUsuario
                 )
             }
         }
@@ -181,23 +173,6 @@ struct PerfilView: View {
         }
     }
 
-    func loadImage() {
-        Task {
-            guard
-                let imageData = try await imageProfileSelect?.loadTransferable(type: Data.self),
-                let uiImage = UIImage(data: imageData)
-            else { return }
-
-            await MainActor.run {
-                processedImage = Image(uiImage: uiImage)
-            }
-        }
-    }
-
-    func removeImage() {
-        processedImage = nil
-        imageProfileSelect = nil
-    }
 }
 
 #Preview {
