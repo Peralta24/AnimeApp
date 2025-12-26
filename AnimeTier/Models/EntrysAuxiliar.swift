@@ -112,3 +112,8 @@ struct AnimeTrailer: Codable {
     
 }
 
+enum TipoColeccion {
+    case favorito
+    case verMasTarde
+    case meGusta
+}

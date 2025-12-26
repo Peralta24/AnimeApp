@@ -34,7 +34,10 @@ struct AddAnimeView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
     
-    var anime: AnimeEntry
+    @State  var vm : AddAnimeViewModel
+    init(anime: AnimeEntry) {
+            _vm = State(initialValue: AddAnimeViewModel(anime: anime))
+        }
     
     var body: some View {
         NavigationStack{
@@ -45,7 +48,7 @@ struct AddAnimeView: View {
                 VStack {
                     
                     HStack(spacing:15) {
-                        AsyncImage(url: URL(string: anime.images.jpg.largeImageUrl ?? "")) { phase in
+                        AsyncImage(url: URL(string: vm.anime.images.jpg.largeImageUrl ?? "")) { phase in
                             if let image = phase.image {
                                 image
                                     .resizable()
@@ -72,7 +75,7 @@ struct AddAnimeView: View {
                             }
                         }
                         VStack(alignment: .leading) {
-                            Text(anime.title)
+                            Text(vm.anime.title)
                                 .font(.headline)
                                 .foregroundColor(.white)
                             Text("Añadir a tu colección")
@@ -84,13 +87,13 @@ struct AddAnimeView: View {
                     
                     HStack(spacing:30) {
                         Button {
-                            agregarAnime(.favorito)
+                            vm.toogle(.favorito, using: modelContext)
                         }label: {
                             VStack (spacing: 5){
                                 
-                                Image(systemName: anime.isFavorite ? "bookmark.fill" :"bookmark")
+                                Image(systemName: vm.anime.isFavorite ? "bookmark.fill" :"bookmark")
                                     .font(.system(size: 20,weight: .bold))
-                                    .foregroundStyle(anime.isFavorite ? .yellow :.colorWords)
+                                    .foregroundStyle(vm.anime.isFavorite ? .yellow :.colorWords)
                                     .circleIcon()
                                 Text("Favoritos")
                                     .font(.caption)
@@ -98,13 +101,13 @@ struct AddAnimeView: View {
                             }
                         }
                         Button {
-                            agregarAnime(.verMasTarde)
+                            vm.toogle(.verMasTarde, using: modelContext)
                         }label: {
                             
                             VStack(spacing:5) {
-                                Image(systemName: anime.isWatchLater ? "clock.fill" :"clock")
+                                Image(systemName: vm.anime.isWatchLater ? "clock.fill" :"clock")
                                     .font(.system(size: 20,weight: .bold))
-                                    .foregroundStyle(anime.isWatchLater ? .blue : .colorWords)
+                                    .foregroundStyle(vm.anime.isWatchLater ? .blue : .colorWords)
                                     .circleIcon()
                                 Text("Ver mas tarde")
                                     .font(.caption)
@@ -112,14 +115,14 @@ struct AddAnimeView: View {
                             }
                         }
                         Button {
-                            agregarAnime(.meGusta)
+                            vm.toogle(.meGusta, using: modelContext)
                         }label: {
                             
                             
                             VStack(spacing:5) {
-                                Image(systemName: anime.isLiked ? "heart.fill" :"heart")
+                                Image(systemName: vm.anime.isLiked ? "heart.fill" :"heart")
                                     .font(.system(size: 20,weight: .bold))
-                                    .foregroundStyle(anime.isLiked ? .red : .colorWords)
+                                    .foregroundStyle(vm.anime.isLiked ? .red : .colorWords)
                                     .circleIcon()
                                 Text("Me gusta")
                                     .font(.caption)
@@ -142,38 +145,6 @@ struct AddAnimeView: View {
                 .padding()
             }
         }
-    }
-    enum TipoColeccion {
-        case favorito
-        case verMasTarde
-        case meGusta
-    }
-    func agregarAnime(_ tipo: TipoColeccion) {
-        
-        switch tipo {
-        case .favorito:
-            if anime.isFavorite {
-                anime.isFavorite = false
-            } else {
-                anime.isFavorite = true
-            }
-        case .verMasTarde:
-            if anime.isWatchLater {
-                anime.isWatchLater = false
-            } else {
-                anime.isWatchLater = true
-            }
-        case .meGusta:
-            if anime.isLiked {
-                anime.isLiked = false
-            } else {
-                anime.isLiked = true
-                
-                
-            }
-        }
-        
-        modelContext.insert(anime)
     }
 }
 
