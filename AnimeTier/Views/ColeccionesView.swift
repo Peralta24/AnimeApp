@@ -23,7 +23,7 @@ struct ColeccionesView: View {
     
     @Query(filter: #Predicate<AnimeEntry>{$0.isLiked})
     var animesMeGusta: [AnimeEntry]
-        
+    
     @State private var vm = ColeccionesViewModel()
     var body: some View {
         ZStack {
@@ -103,8 +103,7 @@ struct AnimeShelfView: View {
                 }
                 .padding(.horizontal)
             }
-
-
+            
         }
         
     }
