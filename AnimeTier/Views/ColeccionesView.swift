@@ -14,6 +14,7 @@ struct RutaColeccion: Hashable {
 }
 
 struct ColeccionesView: View {
+    
     @Query(filter: #Predicate<AnimeEntry>{$0.isFavorite})
     var animeFavoritos: [AnimeEntry]
     
@@ -22,16 +23,13 @@ struct ColeccionesView: View {
     
     @Query(filter: #Predicate<AnimeEntry>{$0.isLiked})
     var animesMeGusta: [AnimeEntry]
-    
-    var estaVacio: Bool {
-        animeFavoritos.isEmpty && animesMasTarder.isEmpty && animesMeGusta.isEmpty
-    }
-    
+        
+    @State private var vm = ColeccionesViewModel()
     var body: some View {
         ZStack {
             Color.colorBackground.ignoresSafeArea()
             
-            if estaVacio {
+            if vm.estaVacio(favoritos: animeFavoritos, verMasTarde: animesMasTarder, meGusta: animesMeGusta) {
                 ContentUnavailableView(
                     "No hay colecciones",
                     systemImage: "square.stack.3d.up.slash",
@@ -42,15 +40,15 @@ struct ColeccionesView: View {
                     VStack(spacing:30) {
                         
                         if !animeFavoritos.isEmpty {
-                            AnimeShelfView(titulo: "Favoritos", animes: animeFavoritos, icon: "star.fill", color: .yellow)
+                            AnimeShelfView(titulo: vm.favoritos.titulo, animes: animeFavoritos, icon: vm.favoritos.icon, color: vm.favoritos.color)
                         }
                         
                         if !animesMasTarder.isEmpty {
-                            AnimeShelfView(titulo: "Ver mas tarde", animes: animesMasTarder, icon: "clock.fill", color: .blue)
+                            AnimeShelfView(titulo: vm.verMasTarde.titulo, animes: animesMasTarder, icon: vm.verMasTarde.icon, color: vm.verMasTarde.color)
                         }
                         
                         if !animesMeGusta.isEmpty {
-                            AnimeShelfView(titulo: "Me gusta", animes: animesMeGusta, icon: "heart.fill", color: .red)
+                            AnimeShelfView(titulo: vm.meGusta.titulo, animes: animesMeGusta, icon: vm.meGusta.icon, color: vm.meGusta.color)
                         }
                     }
                     .padding(.vertical)
