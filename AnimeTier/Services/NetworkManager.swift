@@ -15,8 +15,8 @@ class NetworkManager {
     //La funcion devuelve un array de AnimeEntry
     func fetchTopAnimes(totalPaginas: Int = 2) async throws -> [AnimeEntry] {
         var allAnimesEntries: [AnimeEntry] = []
-        var pagina = 1
-        
+        var pagina = 3
+    
         print("NetworkManager: Iniciando descar de \(pagina) paginas")
         
         while pagina <= totalPaginas {

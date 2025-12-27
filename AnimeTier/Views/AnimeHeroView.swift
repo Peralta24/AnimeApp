@@ -12,17 +12,7 @@ struct AnimeHeroView: View {
     var body: some View {
         
         VStack {
-            AsyncImage(url: URL(string: anime.images.jpg.imageUrl)){phase in
-                if let image = phase.image {
-                    image.resizable().scaledToFill()
-                }else if phase.error != nil {
-                    Image(systemName: "photo")
-                        .foregroundStyle(.gray)
-                } else {
-                    ProgressView()
-                }
-            }
-            .frame(width: 350, height: 250)
+            AnimeImageView(urlString: anime.images.jpg.imageUrl,width: 350, height: 250)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(.colorCardBackground, lineWidth: 1)

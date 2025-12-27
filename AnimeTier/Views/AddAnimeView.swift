@@ -36,8 +36,8 @@ struct AddAnimeView: View {
     
     @State  var vm : AddAnimeViewModel
     init(anime: AnimeEntry) {
-            _vm = State(initialValue: AddAnimeViewModel(anime: anime))
-        }
+        _vm = State(initialValue: AddAnimeViewModel(anime: anime))
+    }
     
     var body: some View {
         NavigationStack{
@@ -48,32 +48,7 @@ struct AddAnimeView: View {
                 VStack {
                     
                     HStack(spacing:15) {
-                        AsyncImage(url: URL(string: vm.anime.images.jpg.largeImageUrl ?? "")) { phase in
-                            if let image = phase.image {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(maxWidth: .infinity)
-                                    .frame(width: 160, height:200 )
-                                    .clipped()
-                            } else if phase.error != nil {
-                                ZStack {
-                                    Color.gray.opacity(0.2)
-                                    Image(systemName: "photo")
-                                        .font(.largeTitle)
-                                        .foregroundStyle(.gray)
-                                }
-                                .frame(width: 60, height: 90)
-                                .frame(maxWidth: .infinity)
-                            } else {
-                                ZStack {
-                                    Color.gray.opacity(0.2)
-                                    ProgressView()
-                                }
-                                .frame(width: 60, height: 90)
-                                .frame(maxWidth: .infinity)
-                            }
-                        }
+                        AnimeImageView(urlString: vm.anime.images.jpg.largeImageUrl,width: 160, height: 200)
                         VStack(alignment: .leading) {
                             Text(vm.anime.title)
                                 .font(.headline)
@@ -132,8 +107,7 @@ struct AddAnimeView: View {
                     }
                     .padding()
                     
-                    
-                    Spacer()
+                                        Spacer()
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading){
                                 Button("Cancelar") {
