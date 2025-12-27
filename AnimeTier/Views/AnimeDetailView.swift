@@ -8,17 +8,18 @@
 import SwiftUI
 import SwiftData
 struct AnimeDetailView: View {
-    var anime: AnimeEntry
-    @Environment(\.openURL) var openURL
-    @State private var showTrailerAlert: Bool = false
-    @State private var showTrailerMessage: String?
     
-    @State private var showAddSheet = false
+    @Environment(\.openURL) var openURL
+
+    @State var vm : AnimeDetailViewModel
+    init(anime: AnimeEntry) {
+            _vm = State(initialValue: AnimeDetailViewModel(anime: anime))
+        }
     
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                AsyncImage(url: URL(string: anime.images.jpg.largeImageUrl ?? "")) { phase in
+                AsyncImage(url: URL(string: vm.anime.images.jpg.largeImageUrl ?? "")) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
@@ -46,7 +47,7 @@ struct AnimeDetailView: View {
                 }
                 
                 HStack {
-                    AsyncImage(url: URL(string: anime.images.jpg.imageUrl)){phase in
+                    AsyncImage(url: URL(string: vm.anime.images.jpg.imageUrl)){phase in
                         if let image = phase.image {
                             image
                                 .resizable()
@@ -72,18 +73,18 @@ struct AnimeDetailView: View {
                         }
                     }
                     VStack (alignment: .leading,spacing: 10){
-                        Text(anime.titleEnglish ?? anime.title)
+                        Text(vm.anime.titleEnglish ?? vm.anime.title)
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundStyle(.colorTitle)
                         
-                        Text("Fecha: \(String(anime.year ?? 0))")
+                        Text("Fecha: \(String(vm.anime.year ?? 0))")
                             .font(.caption)
                             .foregroundStyle(.colorWords)
 
 
                         
-                        Text(anime.title)
+                        Text(vm.anime.title)
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundStyle(.colorWords)
@@ -91,7 +92,7 @@ struct AnimeDetailView: View {
                         HStack {
                             HStack {
                                 Button {
-                                    checkTrailer()
+                                    vm.checkTrailer(open: openURL)
                                 }label : {
                                     Image(systemName: "play")
                                         .resizable()
@@ -113,7 +114,7 @@ struct AnimeDetailView: View {
                                     .fill(Color.purple.opacity(0.1))
                             )
                             Button(action: {
-                                showAddSheet.toggle()
+                                vm.showAddSheet.toggle()
                             }) {
                                 Circle()
                                     .fill(.purple.opacity(0.1))
@@ -126,7 +127,7 @@ struct AnimeDetailView: View {
                                     .shadow(radius: 4)
                             }
                             VStack {
-                                Text(String(format:"%.1f",anime.score ?? 5.0))
+                                Text(String(format:"%.1f",vm.anime.score ?? 5.0))
                                     .font(.title)
                                     .fontWeight(.black)
                                     .foregroundStyle(.colorTitle)
@@ -143,13 +144,13 @@ struct AnimeDetailView: View {
             }
             ScrollView(.horizontal,showsIndicators: false){
                 HStack {
-                    AnimeDetailStats(title: "Tipo", value: anime.type ?? "N/A")
-                    AnimeDetailStats(title: "Estatus", value: anime.status ?? "N/A")
-                    AnimeDetailStats(title: "Episodios", value: String(anime.episodes ?? 0))
-                    ForEach(anime.genres ?? [], id: \.self) {genre in
+                    AnimeDetailStats(title: "Tipo", value: vm.anime.type ?? "N/A")
+                    AnimeDetailStats(title: "Estatus", value: vm.anime.status ?? "N/A")
+                    AnimeDetailStats(title: "Episodios", value: String(vm.anime.episodes ?? 0))
+                    ForEach(vm.anime.genres ?? [], id: \.self) {genre in
                         AnimeDetailStats(title: "Genero", value: genre.name)
                     }
-                    AnimeDetailStats(title: "Ranking Mundial", value: String(anime.popularity ?? 0))
+                    AnimeDetailStats(title: "Ranking Mundial", value: String(vm.anime.popularity ?? 0))
                 }
                 .padding()
                 
@@ -160,7 +161,7 @@ struct AnimeDetailView: View {
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(.colorTitle)
-                Text(anime.synopsis ?? "")
+                Text(vm.anime.synopsis ?? "")
                     .font(.subheadline)
                     .foregroundStyle(.colorWords)
                     .lineSpacing(4)
@@ -171,25 +172,18 @@ struct AnimeDetailView: View {
            
             }
         }
-        .sheet(isPresented: $showAddSheet, content: {
-            AddAnimeView(anime: anime)
+        .sheet(isPresented: $vm.showAddSheet, content: {
+            AddAnimeView(anime: vm.anime)
         })
-        .alert("Aviso", isPresented: $showTrailerAlert) {
+        .alert("Aviso", isPresented: $vm.showTrailerAlert) {
             Button("Ok") {
             }
         } message: {
-            Text(showTrailerMessage ?? "Trailer no disponible")
+            Text(vm.showTrailerMessage ?? "Trailer no disponible")
         }
         .background(Color.colorBackground)
     }
-    func checkTrailer() {
-        if let url = URL(string: anime.trailer?.youtubeId ?? "") {
-            openURL(url)
-        }else {
-            showTrailerAlert = true
-            showTrailerMessage = "Trailer no disponible"
-        }
-    }
+    
 }
 
 #Preview {
