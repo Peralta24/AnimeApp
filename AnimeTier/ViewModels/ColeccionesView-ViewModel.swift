@@ -29,5 +29,5 @@ final class ColeccionesViewModel {
     
     let meGusta = ColeccionConfig(titulo: "Me gusta", icon: "heart.fill", color: .red)
     
-    let favoritos = ColeccionConfig(titulo: "Favoritos", icon: "start.fill", color: .yellow)
+    let favoritos = ColeccionConfig(titulo: "Favoritos", icon: "star.fill", color: .yellow)
 }
