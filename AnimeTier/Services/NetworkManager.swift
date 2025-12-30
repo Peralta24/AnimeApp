@@ -37,5 +37,6 @@ class NetworkManager {
         }
         print("Network: Descarga finalizada. Total recuperado: \(allAnimesDTOs.count)")
         
-        return allAnimesDTOs     }
+        return allAnimesDTOs
+    }
 }
