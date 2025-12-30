@@ -14,7 +14,8 @@ Permite descubrir nuevos títulos, consultar detalles, ver trailers y organizar 
 
 | Inicio | Detalles | Colecciones | Perfil |
 |:---:|:---:|:---:|:---:|
-| <img src="URL_IMAGEN_HOME" width="200"/> | <img src="URL_IMAGEN_DETAIL" width="200"/> | <img src="URL_IMAGEN_COLLECTION" width="200"/> | <img src="URL_IMAGEN_PROFILE" width="200"/> |
+| <img src="assets/screenshots/HomeView.png" width="200"/> | <img src="assets/screenshots/DetailView.png" width="200"/> | <img src="assets/screenshots/ColeccionsView.png" width="200"/> | <img src="assets/screenshots/PerfilView.png" width="200"/> |
+
 
 ---
 
