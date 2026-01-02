@@ -16,7 +16,7 @@ struct SubscriptionView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     
-                    Text("¿Quieres una experiencia premium?")
+                    Text("¿Quieres una experiencia premium?" )
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(.colorTitle)
                         .multilineTextAlignment(.center)
