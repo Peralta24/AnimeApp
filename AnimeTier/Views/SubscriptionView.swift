@@ -10,9 +10,9 @@ import SwiftUI
 struct SubscriptionView: View {
     var body: some View {
         ZStack {
-            Color.colorBackground 
+            Color.colorBackground
                 .ignoresSafeArea()
-
+ 
             ScrollView {
                 VStack(spacing: 20) {
                     
